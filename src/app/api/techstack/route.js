@@ -1,25 +1,26 @@
 import { NextResponse } from "next/server";
+import fetch from "node-fetch"; // Ensure you have node-fetch installed
 import fs from "fs";
 import path from "path";
 
-// Helper function to convert image file to Base64
-const imageToBase64 = (filePath) => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filePath, (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-      const base64 = data.toString("base64");
-      resolve(`data:image/png;base64,${base64}`);
-    });
-  });
+// Helper function to convert image URL to Base64
+const imageUrlToBase64 = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok)
+      throw new Error(`Failed to fetch image: ${response.statusText}`);
+    const buffer = await response.buffer();
+    return `data:image/svg+xml;base64,${buffer.toString("base64")}`;
+  } catch (error) {
+    console.error("Error converting image to Base64:", error);
+    return ""; // Return empty string if there's an error
+  }
 };
 
-// Define image paths
-const getImageBase64 = async (imageName) => {
-  const imagesDir = path.join(process.cwd(), "public", "images");
-  const filePath = path.join(imagesDir, imageName);
-  return await imageToBase64(filePath);
+// Define image URL from skillicons.dev
+const getImageBase64 = async (techName) => {
+  const url = `https://skillicons.dev/icons?i=${techName}`;
+  return await imageUrlToBase64(url);
 };
 
 // Load colors from JSON file
@@ -76,11 +77,14 @@ export async function GET(request) {
 
       // Fetch Base64 data for the logo
       try {
-        logo = await getImageBase64(`${techNameTrimmed}.png`);
+        logo = await getImageBase64(techNameTrimmed);
       } catch (error) {
         console.error(`Error loading image for ${techNameTrimmed}:`, error);
         logo = "";
       }
+
+      // Log for debugging
+      console.log(`Tech: ${techNameTrimmed}, Logo URL: ${logo}`);
 
       // Get the stroke color for the technology
       const strokeColor = colors[techNameTrimmed] || "#3498db"; // Default color if tech not found
@@ -96,7 +100,7 @@ export async function GET(request) {
         cx="${cx}"
         cy="${cy}"
         r="${circleRadius}"
-        stroke="#e6e6e6"
+        stroke="#e6e6e655"
         stroke-width="${circleStrokeWidth}"
         fill="none"
       />
@@ -124,7 +128,7 @@ export async function GET(request) {
       </circle>
       <!-- Logo Image -->
       <image
-        href="https://skillicons.dev/icons?i=${techName}"
+        href="${logo}"
         x="${cx - circleRadius + 16}"
         y="${cy - circleRadius + 16}"
         width="${circleDiameter - 32}"
