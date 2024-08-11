@@ -124,11 +124,11 @@ export async function GET(request) {
       </circle>
       <!-- Logo Image -->
       <image
-        href="${logo}"
-        x="${cx - circleRadius + 12}"
-        y="${cy - circleRadius + 12}"
-        width="${circleDiameter - 24}"
-        height="${circleDiameter - 24}"
+        href="https://skillicons.dev/icons?i=${techName}"
+        x="${cx - circleRadius + 16}"
+        y="${cy - circleRadius + 16}"
+        width="${circleDiameter - 32}"
+        height="${circleDiameter - 32}"
         clip-path="url(#clip-${index})"
       />
       <!-- Clip Path for logo -->
