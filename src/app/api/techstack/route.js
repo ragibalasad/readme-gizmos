@@ -22,6 +22,20 @@ const getImageBase64 = async (imageName) => {
   return await imageToBase64(filePath);
 };
 
+// Load colors from JSON file
+const loadColors = () => {
+  const colorsPath = path.join(
+    process.cwd(),
+    "src",
+    "app",
+    "api",
+    "techstack",
+    "colors.json",
+  ); // Adjust path as needed
+  const colorsData = fs.readFileSync(colorsPath, "utf-8");
+  return JSON.parse(colorsData);
+};
+
 export async function GET(request) {
   // Extract the tech query parameter
   const { searchParams } = new URL(request.url);
@@ -37,6 +51,9 @@ export async function GET(request) {
 
   // Split the tech string into an array of technologies with percentages
   const techArray = tech.split(",");
+
+  // Load colors
+  const colors = loadColors();
 
   // Define SVG dimensions and circle properties
   const svgWidth = 1200;
@@ -54,7 +71,7 @@ export async function GET(request) {
       const cy = svgHeight / 2;
       const [techName, percentage] = t.trim().split("-");
       const percentageValue = parseFloat(percentage) || 0;
-      const techNameTrimmed = techName.trim();
+      const techNameTrimmed = techName.trim().toLowerCase(); // Convert to lower case for consistency
       let logo = "";
 
       // Fetch Base64 data for the logo
@@ -64,6 +81,9 @@ export async function GET(request) {
         console.error(`Error loading image for ${techNameTrimmed}:`, error);
         logo = "";
       }
+
+      // Get the stroke color for the technology
+      const strokeColor = colors[techNameTrimmed] || "#3498db"; // Default color if tech not found
 
       // Calculate stroke-dashoffset based on percentage
       const radius = circleRadius;
@@ -85,7 +105,7 @@ export async function GET(request) {
         cx="${cx}"
         cy="${cy}"
         r="${circleRadius}"
-        stroke="#3498db"
+        stroke="${strokeColor}"
         stroke-width="${circleStrokeWidth}"
         fill="none"
         stroke-dasharray="${circumference}"
