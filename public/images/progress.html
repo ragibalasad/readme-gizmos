@@ -1,0 +1,35 @@
+<svg width="100" height="100" viewBox="0 0 100 100">
+  <!-- Circle Background (Optional) -->
+  <circle
+    cx="50"
+    cy="50"
+    r="45"
+    stroke="#e6e6e6"
+    stroke-width="8"
+    fill="none"
+  />
+  
+  <!-- Animated Circle -->
+  <circle
+    cx="50"
+    cy="50"
+    r="45"
+    stroke="#3498db"
+    stroke-width="8"
+    fill="none"
+    stroke-dasharray="282.74"
+    stroke-dashoffset="282.74"
+    stroke-linecap="round"
+    transform="rotate(-90, 50, 50)"
+  >
+    <animate
+      attributeName="stroke-dashoffset"
+      from="282.74"
+      to="28.274"
+      dur="2s"
+      fill="freeze"
+      begin="0s"
+    />
+  </circle>
+</svg>
+
