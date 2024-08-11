@@ -23,11 +23,12 @@ export async function GET(request) {
   const circleStrokeWidth = 8;
   const circleDiameter = circleRadius * 2;
   const gap = 20; // Space between circles
+  const padding = 12;
 
   // Create circles for each tech
   const circles = techArray
     .map((t, index) => {
-      const cx = circleDiameter * index + circleRadius + gap * index;
+      const cx = circleDiameter * index + circleRadius + gap * index + padding;
       const cy = svgHeight / 2;
 
       return `
