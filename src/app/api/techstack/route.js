@@ -35,14 +35,14 @@ export async function GET(request) {
     );
   }
 
-  // Split the tech string into an array of technologies
+  // Split the tech string into an array of technologies with percentages
   const techArray = tech.split(",");
 
   // Define SVG dimensions and circle properties
   const svgWidth = 1200;
   const svgHeight = 100; // Adjusted for horizontal layout
   const circleRadius = 40;
-  const circleStrokeWidth = 8;
+  const circleStrokeWidth = 6;
   const circleDiameter = circleRadius * 2;
   const gap = 20; // Space between circles
   const padding = 12;
@@ -52,16 +52,23 @@ export async function GET(request) {
     techArray.map(async (t, index) => {
       const cx = circleDiameter * index + circleRadius + gap * index + padding;
       const cy = svgHeight / 2;
-      const techName = t.trim();
+      const [techName, percentage] = t.trim().split("-");
+      const percentageValue = parseFloat(percentage) || 0;
+      const techNameTrimmed = techName.trim();
       let logo = "";
 
       // Fetch Base64 data for the logo
       try {
-        logo = await getImageBase64(`${techName}.png`);
+        logo = await getImageBase64(`${techNameTrimmed}.png`);
       } catch (error) {
-        console.error(`Error loading image for ${techName}:`, error);
+        console.error(`Error loading image for ${techNameTrimmed}:`, error);
         logo = "";
       }
+
+      // Calculate stroke-dashoffset based on percentage
+      const radius = circleRadius;
+      const circumference = 2 * Math.PI * radius;
+      const offset = circumference * (1 - percentageValue / 100);
 
       return `
       <!-- Background Circle -->
@@ -81,16 +88,16 @@ export async function GET(request) {
         stroke="#3498db"
         stroke-width="${circleStrokeWidth}"
         fill="none"
-        stroke-dasharray="282.74"
-        stroke-dashoffset="282.74"
+        stroke-dasharray="${circumference}"
+        stroke-dashoffset="${offset}"
         stroke-linecap="round"
         transform="rotate(-90, ${cx}, ${cy})"
       >
         <animate
           attributeName="stroke-dashoffset"
-          from="282.74"
-          to="28.274"
-          dur="2s"
+          from="${circumference}"
+          to="${offset}"
+          dur="1.5s"
           fill="freeze"
           begin="0s"
         />
