@@ -52,6 +52,7 @@ export async function GET(request, { params }) {
     return new NextResponse(svgData, {
       headers: {
         "Content-Type": "image/svg+xml",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
       },
     });
   } catch (error) {
