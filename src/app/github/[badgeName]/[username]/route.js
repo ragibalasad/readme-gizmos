@@ -1,4 +1,9 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
+
+function generateRandomString(length) {
+  return randomBytes(length).toString("hex");
+}
 
 export async function GET(request, { params }) {
   const { badgeName, username } = params;
@@ -10,6 +15,10 @@ export async function GET(request, { params }) {
   const labelColor = searchParams.get("labelColor");
   const style = searchParams.get("style");
   const logo = searchParams.get("logo");
+
+  // Generate random strings
+  const random_string1 = generateRandomString(8); // 64 bits = 8 bytes
+  const random_string2 = generateRandomString(8); // 64 bits = 8 bytes
 
   // Validate required parameters
   if (!badgeName || !username) {
@@ -30,6 +39,9 @@ export async function GET(request, { params }) {
     if (labelColor) queryParams.append("labelColor", labelColor);
     if (style) queryParams.append("style", style);
     if (logo) queryParams.append("logo", logo);
+    // You can include the random strings as query parameters if needed
+    queryParams.append("random_string1", random_string1);
+    queryParams.append("random_string2", random_string2);
 
     // Add the query parameters to the URL
     if (queryParams.toString()) {
